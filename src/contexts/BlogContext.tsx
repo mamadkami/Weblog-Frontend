@@ -30,7 +30,7 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/articles');
+        const response = await fetch('https://weblog-backend-cl78.onrender.com/api/articles');
         const data = await response.json();
         setBlogs(data);
       } catch (error) {
@@ -43,7 +43,7 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // افزودن بلاگ جدید
   const addBlog = async (blogData: Omit<Blog, 'id'>) => {
     try {
-      const response = await fetch('http://localhost:3000/api/articles', {
+      const response = await fetch('https://weblog-backend-cl78.onrender.com/api/articles', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // به‌روزرسانی بلاگ
   const updateBlog = async (id: number, blogData: Omit<Blog, 'id'>) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/articles/${id}`, {
+      const response = await fetch(`https://weblog-backend-cl78.onrender.com/api/articles/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // حذف بلاگ
   const deleteBlog = async (id: number) => {
     try {
-      await fetch(`http://localhost:3000/api/articles/${id}`, {
+      await fetch(`https://weblog-backend-cl78.onrender.com/api/articles/${id}`, {
         method: 'DELETE',
       });
       setBlogs(blogs.filter(blog => blog.id !== id));

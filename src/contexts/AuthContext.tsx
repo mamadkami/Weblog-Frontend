@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
       console.log('Attempting login with:', { username, password }); // لاگ برای دیباگ
-      const response = await axios.post('http://localhost:3000/api/login', {
+      const response = await axios.post('https://weblog-backend-cl78.onrender.com/api/login', {
         username,
         password,
       });
