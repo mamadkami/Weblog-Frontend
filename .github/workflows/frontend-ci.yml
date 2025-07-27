@@ -1,40 +1,55 @@
+name: Build and Test Frontend
+
+on:
+  push:
+    branches:
+      - master
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - run: |
+      - name: Lint and Type Check
+        run: |
           npm run lint || echo "Lint failed"
           tsc --noEmit || echo "Type check failed"
 
-      - run: npm run build
+      - name: Build project
+        run: npm run build
 
-      # مطمئن بشید داکر نصب شده
-      - name: Check Docker version
-        run: docker --version
+      - name: Build Docker image
+        run: docker build -t test-frontend-app .
 
-      - run: docker build -t test-frontend-app .
+      - name: Run Docker container
+        run: docker run -d -p 8080:80 --name test-container test-frontend-app
 
-      - run: docker run -d -p 8080:80 --name test-container test-frontend-app
+      - name: List running containers
+        run: docker ps -a
 
-      - run: docker ps -a
+      - name: Wait for app to start
+        run: sleep 5
 
-      - run: sleep 5
+      - name: Test with curl (outside container)
+        run: curl -f http://localhost:8080
 
-      - run: curl -f http://localhost:8080
+      - name: Test with curl inside container (alternative)
+        run: docker exec test-container curl -f http://localhost
 
-      - run: docker exec test-container curl -f http://localhost
-
-      - if: failure()
+      - name: Show container logs if needed
+        if: failure()
         run: docker logs test-container
 
-      # مرحله پاکسازی کانتینر برای جلوگیری از باقی موندن
-      - if: always()
+      - name: Cleanup container
+        if: always()
         run: docker rm -f test-container || true
